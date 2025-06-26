@@ -4,14 +4,12 @@ import { ChangeEventHandler, useEffect, useState } from "react";
 
 export default function Home() {
   const [advocates, setAdvocates] = useState([]);
-  const [filteredAdvocates, setFilteredAdvocates] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     fetch("/api/advocates").then((response) => {
       response.json().then((jsonResponse) => {
         setAdvocates(jsonResponse.data);
-        setFilteredAdvocates(jsonResponse.data);
       });
     });
   }, []);
@@ -20,25 +18,22 @@ export default function Home() {
     const newSearchTerm = event.target.value;
 
     setSearchTerm(newSearchTerm);
-
-    const filteredAdvocates = advocates.filter((advocate) => {
-      return (
-        advocate.firstName.includes(newSearchTerm) ||
-        advocate.lastName.includes(newSearchTerm) ||
-        advocate.city.includes(newSearchTerm) ||
-        advocate.degree.includes(newSearchTerm) ||
-        advocate.specialties.includes(newSearchTerm) ||
-        advocate.yearsOfExperience.includes(newSearchTerm)
-      );
-    });
-
-    setFilteredAdvocates(filteredAdvocates);
   };
 
   const handleResetSearch = () => {
     setSearchTerm('');
-    setFilteredAdvocates(advocates);
   };
+
+  const filteredAdvocates = advocates.filter((advocate) => {
+    return (
+      advocate.firstName.includes(searchTerm) ||
+      advocate.lastName.includes(searchTerm) ||
+      advocate.city.includes(searchTerm) ||
+      advocate.degree.includes(searchTerm) ||
+      advocate.specialties.includes(searchTerm) ||
+      advocate.yearsOfExperience.includes(searchTerm)
+    );
+  });
 
   return (
     <main style={{ margin: "24px" }}>
