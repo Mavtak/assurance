@@ -2,17 +2,17 @@
 
 import { Advocate } from "@/db/schema";
 import { ChangeEventHandler, useEffect, useState } from "react";
+import useAsyncEffect from "./utils/useAsyncEffect";
 
 export default function Home() {
   const [advocates, setAdvocates] = useState<Advocate[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
-    fetch("/api/advocates").then((response) => {
-      response.json().then((jsonResponse) => {
-        setAdvocates(jsonResponse.data);
-      });
-    });
+  useAsyncEffect(async () => {
+    const response = await fetch("/api/advocates");
+    const jsonResponse = await response.json();
+    
+    setAdvocates(jsonResponse.data);
   }, []);
 
   const handleChangeSearchTerm: ChangeEventHandler<HTMLInputElement> = (event) => {
