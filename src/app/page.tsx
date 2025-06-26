@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { ChangeEventHandler, useEffect, useState } from "react";
 
 export default function Home() {
   const [advocates, setAdvocates] = useState([]);
   const [filteredAdvocates, setFilteredAdvocates] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     fetch("/api/advocates").then((response) => {
@@ -15,19 +16,19 @@ export default function Home() {
     });
   }, []);
 
-  const onChangeSearchTerm = (e) => {
-    const searchTerm = e.target.value;
+  const handleChangeSearchTerm: ChangeEventHandler<HTMLInputElement> = (event) => {
+    const newSearchTerm = event.target.value;
 
-    document.getElementById("search-term").innerHTML = searchTerm;
+    setSearchTerm(newSearchTerm);
 
     const filteredAdvocates = advocates.filter((advocate) => {
       return (
-        advocate.firstName.includes(searchTerm) ||
-        advocate.lastName.includes(searchTerm) ||
-        advocate.city.includes(searchTerm) ||
-        advocate.degree.includes(searchTerm) ||
-        advocate.specialties.includes(searchTerm) ||
-        advocate.yearsOfExperience.includes(searchTerm)
+        advocate.firstName.includes(newSearchTerm) ||
+        advocate.lastName.includes(newSearchTerm) ||
+        advocate.city.includes(newSearchTerm) ||
+        advocate.degree.includes(newSearchTerm) ||
+        advocate.specialties.includes(newSearchTerm) ||
+        advocate.yearsOfExperience.includes(newSearchTerm)
       );
     });
 
@@ -35,6 +36,7 @@ export default function Home() {
   };
 
   const handleResetSearch = () => {
+    setSearchTerm('');
     setFilteredAdvocates(advocates);
   };
 
@@ -48,7 +50,7 @@ export default function Home() {
         <p>
           Searching for: <span id="search-term"></span>
         </p>
-        <input style={{ border: "1px solid black" }} onChange={onChangeSearchTerm} />
+        <input style={{ border: "1px solid black" }} onChange={handleChangeSearchTerm} value={searchTerm} />
         <button onClick={handleResetSearch}>Reset Search</button>
       </div>
       <br />
