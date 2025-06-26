@@ -15,7 +15,7 @@ export default function Home() {
     });
   }, []);
 
-  const onChange = (e) => {
+  const onChangeSearchTerm = (e) => {
     const searchTerm = e.target.value;
 
     document.getElementById("search-term").innerHTML = searchTerm;
@@ -34,7 +34,7 @@ export default function Home() {
     setFilteredAdvocates(filteredAdvocates);
   };
 
-  const onClick = () => {
+  const handleResetSearch = () => {
     setFilteredAdvocates(advocates);
   };
 
@@ -48,8 +48,8 @@ export default function Home() {
         <p>
           Searching for: <span id="search-term"></span>
         </p>
-        <input style={{ border: "1px solid black" }} onChange={onChange} />
-        <button onClick={onClick}>Reset Search</button>
+        <input style={{ border: "1px solid black" }} onChange={onChangeSearchTerm} />
+        <button onClick={handleResetSearch}>Reset Search</button>
       </div>
       <br />
       <br />
