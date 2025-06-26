@@ -4,6 +4,15 @@ import { Advocate } from "@/db/schema";
 import { ChangeEventHandler, useEffect, useState } from "react";
 import useAsyncEffect from "./utils/useAsyncEffect";
 import delay from "./utils/delay";
+import styled from "styled-components";
+
+const Container = styled.main`
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
 
 export default function Home() {
   const [advocates, setAdvocates] = useState<Advocate[]>([]);
@@ -97,20 +106,14 @@ export default function Home() {
   };
 
   return (
-    <main style={{ margin: "24px" }}>
+    <Container>
       <h1>Solace Advocates</h1>
       <h2>Search</h2>
-      <br />
       <div>
-        <p>
-          Searching for: <span id="search-term"></span>
-        </p>
         <input style={{ border: "1px solid black" }} onChange={handleChangeSearchTerm} value={searchTerm} />
         <button onClick={handleResetSearch}>Reset Search</button>
       </div>
-      <br />
-      <br />
       {renderResults()}
-    </main>
+    </Container>
   );
 }
