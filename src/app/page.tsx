@@ -6,6 +6,7 @@ import useAsyncEffect from "./utils/useAsyncEffect";
 import delay from "./utils/delay";
 import styled from "styled-components";
 import SearchField from "./SearchField";
+import AdvocateList from "./AdvocateList";
 
 const Container = styled.main`
   width: 100%;
@@ -61,39 +62,8 @@ export default function Home() {
     };
 
     return (
-      <table>
-        <thead>
-          <tr>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>City</th>
-            <th>Degree</th>
-            <th>Specialties</th>
-            <th>Years of Experience</th>
-            <th>Phone Number</th>
-          </tr>
-        </thead>
-        <tbody>
-          {advocates.map((advocate) => {
-            return (
-              <tr>
-                <td>{advocate.firstName}</td>
-                <td>{advocate.lastName}</td>
-                <td>{advocate.city}</td>
-                <td>{advocate.degree}</td>
-                <td>
-                  {(advocate.specialties as string[]).map((s) => (
-                    <div>{s}</div>
-                  ))}
-                </td>
-                <td>{advocate.yearsOfExperience}</td>
-                <td>{advocate.phoneNumber}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    );
+      <AdvocateList advocates={advocates} />
+    )
   };
 
   return (
