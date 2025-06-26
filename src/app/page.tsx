@@ -9,11 +9,12 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = useState('');
 
   useAsyncEffect(async () => {
-    const response = await fetch("/api/advocates");
+    const path = `/api/advocates?searchTerm=${searchTerm}`;
+    const response = await fetch(path);
     const jsonResponse = await response.json();
-    
+
     setAdvocates(jsonResponse.data);
-  }, []);
+  }, [searchTerm]);
 
   const handleChangeSearchTerm: ChangeEventHandler<HTMLInputElement> = (event) => {
     const newSearchTerm = event.target.value;
@@ -24,17 +25,6 @@ export default function Home() {
   const handleResetSearch = () => {
     setSearchTerm('');
   };
-
-  const filteredAdvocates = advocates.filter((advocate) => {
-    return (
-      advocate.firstName.includes(searchTerm) ||
-      advocate.lastName.includes(searchTerm) ||
-      advocate.city.includes(searchTerm) ||
-      advocate.degree.includes(searchTerm) ||
-      (advocate.specialties as string[]).find(specialty => specialty.includes(searchTerm)) ||
-      String(advocate.yearsOfExperience).includes(searchTerm)
-    );
-  });
 
   return (
     <main style={{ margin: "24px" }}>
@@ -64,7 +54,7 @@ export default function Home() {
           </tr>
         </thead>
         <tbody>
-          {filteredAdvocates.map((advocate) => {
+          {advocates.map((advocate) => {
             return (
               <tr>
                 <td>{advocate.firstName}</td>
