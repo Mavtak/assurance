@@ -2,18 +2,36 @@
 
 import { Advocate } from "@/db/schema";
 import { ChangeEventHandler, useEffect, useState } from "react";
+import useAsyncEffect from "./utils/useAsyncEffect";
+import delay from "./utils/delay";
 
 export default function Home() {
   const [advocates, setAdvocates] = useState<Advocate[]>([]);
+  const [loadingState, setLoadingState] = useState<'loading' | 'initializing' | 'ready'>('initializing');
   const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
-    fetch("/api/advocates").then((response) => {
-      response.json().then((jsonResponse) => {
-        setAdvocates(jsonResponse.data);
-      });
-    });
-  }, []);
+  useAsyncEffect(async (checkIsLatestCall) => {
+    if (loadingState !== 'initializing') {
+      await delay(250);
+
+      if (!checkIsLatestCall()) {
+        return;
+      }
+
+      setLoadingState('loading');
+    }
+
+    const path = `/api/advocates?searchTerm=${searchTerm}`;
+    const response = await fetch(path);
+    const jsonResponse = await response.json();
+
+    if (!checkIsLatestCall()) {
+      return;
+    }
+
+    setAdvocates(jsonResponse.data);
+    setLoadingState('ready');
+  }, [searchTerm]);
 
   const handleChangeSearchTerm: ChangeEventHandler<HTMLInputElement> = (event) => {
     const newSearchTerm = event.target.value;
@@ -25,32 +43,24 @@ export default function Home() {
     setSearchTerm('');
   };
 
-  const filteredAdvocates = advocates.filter((advocate) => {
+  if (loadingState === 'initializing') {
     return (
-      advocate.firstName.includes(searchTerm) ||
-      advocate.lastName.includes(searchTerm) ||
-      advocate.city.includes(searchTerm) ||
-      advocate.degree.includes(searchTerm) ||
-      (advocate.specialties as string[]).find(specialty => specialty.includes(searchTerm)) ||
-      String(advocate.yearsOfExperience).includes(searchTerm)
-    );
-  });
-
-  return (
-    <main style={{ margin: "24px" }}>
-      <h1>Solace Advocates</h1>
-      <br />
-      <br />
       <div>
-        <p>Search</p>
-        <p>
-          Searching for: <span id="search-term"></span>
-        </p>
-        <input style={{ border: "1px solid black" }} onChange={handleChangeSearchTerm} value={searchTerm} />
-        <button onClick={handleResetSearch}>Reset Search</button>
+        loading
       </div>
-      <br />
-      <br />
+    )
+  }
+
+  const renderResults = () => {
+    if (loadingState === 'loading') {
+      return (
+        <div>
+          loading
+        </div>
+      )
+    };
+
+    return (
       <table>
         <thead>
           <tr>
@@ -64,7 +74,7 @@ export default function Home() {
           </tr>
         </thead>
         <tbody>
-          {filteredAdvocates.map((advocate) => {
+          {advocates.map((advocate) => {
             return (
               <tr>
                 <td>{advocate.firstName}</td>
@@ -83,6 +93,25 @@ export default function Home() {
           })}
         </tbody>
       </table>
+    );
+  };
+
+  return (
+    <main style={{ margin: "24px" }}>
+      <h1>Solace Advocates</h1>
+      <br />
+      <br />
+      <div>
+        <p>Search</p>
+        <p>
+          Searching for: <span id="search-term"></span>
+        </p>
+        <input style={{ border: "1px solid black" }} onChange={handleChangeSearchTerm} value={searchTerm} />
+        <button onClick={handleResetSearch}>Reset Search</button>
+      </div>
+      <br />
+      <br />
+      {renderResults()}
     </main>
   );
 }
