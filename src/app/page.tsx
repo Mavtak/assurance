@@ -6,14 +6,18 @@ import useAsyncEffect from "./utils/useAsyncEffect";
 
 export default function Home() {
   const [advocates, setAdvocates] = useState<Advocate[]>([]);
+  const [loadingState, setLoadingState] = useState<'loading' | 'ready'>('loading');
   const [searchTerm, setSearchTerm] = useState('');
 
   useAsyncEffect(async () => {
+    setLoadingState('loading');
+
     const path = `/api/advocates?searchTerm=${searchTerm}`;
     const response = await fetch(path);
     const jsonResponse = await response.json();
 
     setAdvocates(jsonResponse.data);
+    setLoadingState('ready');
   }, [searchTerm]);
 
   const handleChangeSearchTerm: ChangeEventHandler<HTMLInputElement> = (event) => {
@@ -27,6 +31,14 @@ export default function Home() {
   };
 
   const renderResults = () => {
+    if (loadingState === 'loading') {
+      return (
+        <div>
+          loading
+        </div>
+      )
+    };
+
     return (
       <table>
         <thead>
