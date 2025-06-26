@@ -1,10 +1,11 @@
 "use client";
 
 import { Advocate } from "@/db/schema";
-import { ChangeEventHandler, useEffect, useState } from "react";
+import { useState } from "react";
 import useAsyncEffect from "./utils/useAsyncEffect";
 import delay from "./utils/delay";
 import styled from "styled-components";
+import SearchField from "./SearchField";
 
 const Container = styled.main`
   width: 100%;
@@ -41,16 +42,6 @@ export default function Home() {
     setAdvocates(jsonResponse.data);
     setLoadingState('ready');
   }, [searchTerm]);
-
-  const handleChangeSearchTerm: ChangeEventHandler<HTMLInputElement> = (event) => {
-    const newSearchTerm = event.target.value;
-
-    setSearchTerm(newSearchTerm);
-  };
-
-  const handleResetSearch = () => {
-    setSearchTerm('');
-  };
 
   if (loadingState === 'initializing') {
     return (
@@ -109,10 +100,7 @@ export default function Home() {
     <Container>
       <h1>Solace Advocates</h1>
       <h2>Search</h2>
-      <div>
-        <input style={{ border: "1px solid black" }} onChange={handleChangeSearchTerm} value={searchTerm} />
-        <button onClick={handleResetSearch}>Reset Search</button>
-      </div>
+      <SearchField onChange={setSearchTerm} value={searchTerm} />
       {renderResults()}
     </Container>
   );
