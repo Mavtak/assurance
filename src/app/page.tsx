@@ -26,21 +26,8 @@ export default function Home() {
     setSearchTerm('');
   };
 
-  return (
-    <main style={{ margin: "24px" }}>
-      <h1>Solace Advocates</h1>
-      <br />
-      <br />
-      <div>
-        <p>Search</p>
-        <p>
-          Searching for: <span id="search-term"></span>
-        </p>
-        <input style={{ border: "1px solid black" }} onChange={handleChangeSearchTerm} value={searchTerm} />
-        <button onClick={handleResetSearch}>Reset Search</button>
-      </div>
-      <br />
-      <br />
+  const renderResults = () => {
+    return (
       <table>
         <thead>
           <tr>
@@ -73,6 +60,25 @@ export default function Home() {
           })}
         </tbody>
       </table>
+    );
+  };
+
+  return (
+    <main style={{ margin: "24px" }}>
+      <h1>Solace Advocates</h1>
+      <br />
+      <br />
+      <div>
+        <p>Search</p>
+        <p>
+          Searching for: <span id="search-term"></span>
+        </p>
+        <input style={{ border: "1px solid black" }} onChange={handleChangeSearchTerm} value={searchTerm} />
+        <button onClick={handleResetSearch}>Reset Search</button>
+      </div>
+      <br />
+      <br />
+      {renderResults()}
     </main>
   );
 }
