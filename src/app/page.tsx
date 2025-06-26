@@ -1,9 +1,10 @@
 "use client";
 
+import { Advocate } from "@/db/schema";
 import { ChangeEventHandler, useEffect, useState } from "react";
 
 export default function Home() {
-  const [advocates, setAdvocates] = useState([]);
+  const [advocates, setAdvocates] = useState<Advocate[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
@@ -30,7 +31,7 @@ export default function Home() {
       advocate.lastName.includes(searchTerm) ||
       advocate.city.includes(searchTerm) ||
       advocate.degree.includes(searchTerm) ||
-      advocate.specialties.find(specialty => specialty.includes(searchTerm)) ||
+      (advocate.specialties as string[]).find(specialty => specialty.includes(searchTerm)) ||
       String(advocate.yearsOfExperience).includes(searchTerm)
     );
   });
@@ -71,7 +72,7 @@ export default function Home() {
                 <td>{advocate.city}</td>
                 <td>{advocate.degree}</td>
                 <td>
-                  {advocate.specialties.map((s) => (
+                  {(advocate.specialties as string[]).map((s) => (
                     <div>{s}</div>
                   ))}
                 </td>
