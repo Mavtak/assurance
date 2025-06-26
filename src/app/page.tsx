@@ -1,9 +1,20 @@
 "use client";
 
 import { Advocate } from "@/db/schema";
-import { ChangeEventHandler, useEffect, useState } from "react";
+import { useState } from "react";
 import useAsyncEffect from "./utils/useAsyncEffect";
 import delay from "./utils/delay";
+import styled from "styled-components";
+import SearchField from "./SearchField";
+import AdvocateList from "./AdvocateList";
+
+const Container = styled.main`
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
 
 export default function Home() {
   const [advocates, setAdvocates] = useState<Advocate[]>([]);
@@ -33,16 +44,6 @@ export default function Home() {
     setLoadingState('ready');
   }, [searchTerm]);
 
-  const handleChangeSearchTerm: ChangeEventHandler<HTMLInputElement> = (event) => {
-    const newSearchTerm = event.target.value;
-
-    setSearchTerm(newSearchTerm);
-  };
-
-  const handleResetSearch = () => {
-    setSearchTerm('');
-  };
-
   if (loadingState === 'initializing') {
     return (
       <div>
@@ -61,57 +62,16 @@ export default function Home() {
     };
 
     return (
-      <table>
-        <thead>
-          <tr>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>City</th>
-            <th>Degree</th>
-            <th>Specialties</th>
-            <th>Years of Experience</th>
-            <th>Phone Number</th>
-          </tr>
-        </thead>
-        <tbody>
-          {advocates.map((advocate) => {
-            return (
-              <tr>
-                <td>{advocate.firstName}</td>
-                <td>{advocate.lastName}</td>
-                <td>{advocate.city}</td>
-                <td>{advocate.degree}</td>
-                <td>
-                  {(advocate.specialties as string[]).map((s) => (
-                    <div>{s}</div>
-                  ))}
-                </td>
-                <td>{advocate.yearsOfExperience}</td>
-                <td>{advocate.phoneNumber}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    );
+      <AdvocateList advocates={advocates} />
+    )
   };
 
   return (
-    <main style={{ margin: "24px" }}>
+    <Container>
       <h1>Solace Advocates</h1>
-      <br />
-      <br />
-      <div>
-        <p>Search</p>
-        <p>
-          Searching for: <span id="search-term"></span>
-        </p>
-        <input style={{ border: "1px solid black" }} onChange={handleChangeSearchTerm} value={searchTerm} />
-        <button onClick={handleResetSearch}>Reset Search</button>
-      </div>
-      <br />
-      <br />
+      <h2>Search</h2>
+      <SearchField onChange={setSearchTerm} value={searchTerm} />
       {renderResults()}
-    </main>
+    </Container>
   );
 }
