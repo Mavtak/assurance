@@ -3,18 +3,31 @@
 import { Advocate } from "@/db/schema";
 import { ChangeEventHandler, useEffect, useState } from "react";
 import useAsyncEffect from "./utils/useAsyncEffect";
+import delay from "./utils/delay";
 
 export default function Home() {
   const [advocates, setAdvocates] = useState<Advocate[]>([]);
-  const [loadingState, setLoadingState] = useState<'loading' | 'ready'>('loading');
+  const [loadingState, setLoadingState] = useState<'loading' | 'initializing' | 'ready'>('initializing');
   const [searchTerm, setSearchTerm] = useState('');
 
-  useAsyncEffect(async () => {
-    setLoadingState('loading');
+  useAsyncEffect(async (checkIsLatestCall) => {
+    if (loadingState !== 'initializing') {
+      await delay(250);
+
+      if (!checkIsLatestCall()) {
+        return;
+      }
+
+      setLoadingState('loading');
+    }
 
     const path = `/api/advocates?searchTerm=${searchTerm}`;
     const response = await fetch(path);
     const jsonResponse = await response.json();
+
+    if (!checkIsLatestCall()) {
+      return;
+    }
 
     setAdvocates(jsonResponse.data);
     setLoadingState('ready');
@@ -29,6 +42,14 @@ export default function Home() {
   const handleResetSearch = () => {
     setSearchTerm('');
   };
+
+  if (loadingState === 'initializing') {
+    return (
+      <div>
+        loading
+      </div>
+    )
+  }
 
   const renderResults = () => {
     if (loadingState === 'loading') {
