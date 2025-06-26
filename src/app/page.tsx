@@ -99,10 +99,9 @@ export default function Home() {
   return (
     <main style={{ margin: "24px" }}>
       <h1>Solace Advocates</h1>
-      <br />
+      <h2>Search</h2>
       <br />
       <div>
-        <p>Search</p>
         <p>
           Searching for: <span id="search-term"></span>
         </p>

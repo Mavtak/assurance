@@ -12,6 +12,14 @@ const StyledBody = styled.body`
   padding: 25px;
 
   background-color: #265b4e;
+
+  h1 {
+    font-size: 24px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
 `;
 
 const Content = styled.div`
